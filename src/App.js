@@ -3,10 +3,19 @@ import React, { Component } from 'react';
 import * as ContactsAPI from './utils/ContactsAPI'
 // import CreateContact from './CreateContact'
 import { Route } from 'react-router-dom'
-import asyncComponent from './AsyncComponent'
+// import asyncComponent from './AsyncComponent'
+import Loadable from 'react-loadable'
+import MyLoadingComponent from './MyLoadingComponent'
 
-const AsyncListContacts = asyncComponent(() => import("./ListContacts"));
-const AsyncCreateContact = asyncComponent(() => import("./CreateContact"));
+
+const LoadableListContacts = Loadable({
+  loader: () => import('./ListContacts'),
+  loading: MyLoadingComponent
+})
+const LoadableCreateContact = Loadable({
+  loader: () => import("./CreateContact"),
+  loading: MyLoadingComponent
+})
 
 class App extends Component {
   state = {
@@ -45,13 +54,13 @@ class App extends Component {
     return (
       <div className="App">
         <Route exact path='/' render={()=>(
-          <AsyncListContacts
+          <LoadableListContacts
             contacts={this.state.contacts}
             onDeleteContact={this.removeContact}
           />
         )} />
         <Route path='/create' render={({ history }) => (
-          <AsyncCreateContact
+          <LoadableCreateContact
             onCreateContact={(contact)=> {
               this.createContact(contact)
               history.push('/')
